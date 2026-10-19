@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Felmyst", "DBM-Sunwell")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(25038)
 mod:SetEncounterID(726)
 mod:SetUsedIcons(8, 7)

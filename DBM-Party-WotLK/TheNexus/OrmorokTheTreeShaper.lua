@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 mod.statTypes = "normal,heroic,mythic"
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(26794)
 mod:SetEncounterID(524)
 
@@ -27,15 +27,20 @@ local timerReflectionCD		= mod:NewCDTimer(30, 47981, nil, "SpellCaster", 2, 5, n
 local timerSpikesCD			= mod:NewCDTimer(12.1, 47958, nil, nil, nil, 3)--Health based or CD?
 
 function mod:OnCombatStart(delay)
-	timerSpikesCD:Start(10-delay)
-	timerReflectionCD:Start(20-delay)
+	if self:IsDifficulty("heroic5") then -- Frostmourne logs (2 pulls): Crystal Spikes 11.9 / 12.0 then 20; Spell Reflection 29.9 / 30.0
+		timerSpikesCD:Start(12-delay)
+		timerReflectionCD:Start(30-delay)
+	else
+		timerSpikesCD:Start(10-delay)
+		timerReflectionCD:Start(20-delay)
+	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(47958, 57082, 57083) then
 		specWarnSpikes:Show()
 		specWarnSpikes:Play("watchstep")
-		timerSpikesCD:Start()
+		timerSpikesCD:Start(self:IsDifficulty("heroic5") and 20 or nil)
 	elseif args:IsSpellID(48017, 57086) then
 		warningFrenzy:Show()
 	end

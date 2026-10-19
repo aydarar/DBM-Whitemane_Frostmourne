@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("MaidenRot", "DBM-Karazhan-Frostmourne")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(354272)
 mod:SetEncounterID(924)
 mod:RegisterCombat("combat")

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Zuramat", "DBM-Party-WotLK", 12)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(29314)
 mod:SetEncounterID(2663)
 

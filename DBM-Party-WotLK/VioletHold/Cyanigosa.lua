@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Cyanigosa", "DBM-Party-WotLK", 12)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(31134)
 mod:SetEncounterID(545)
 
@@ -27,14 +27,14 @@ local timerMana			= mod:NewTargetTimer(8, 59374, nil, "Healer", nil, 5, nil, DBM
 local timerCombat		= mod:NewCombatTimer(14)
 
 function mod:OnCombatStart(delay)
-	timerVacuumCD:Start(30 - delay)
+	timerVacuumCD:Start((self:IsDifficulty("heroic5") and 10 or 30) - delay) -- Frostmourne log: Arcane Vacuum at 9.9, 19.9, 29.9, 39.9
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 58694 then
 		warningVacuum:Show()
 		timerVacuumCD:Cancel()
-		timerVacuumCD:Start()
+		timerVacuumCD:Start(self:IsDifficulty("heroic5") and 10 or nil)
 	elseif args:IsSpellID(58693, 59369) then
 		warningBlizzard:Show()
 	end

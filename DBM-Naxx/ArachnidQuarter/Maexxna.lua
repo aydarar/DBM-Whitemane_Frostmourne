@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Maexxna", "DBM-Naxx", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(15952)
 mod:SetEncounterID(1116)
 mod:RegisterCombat("combat")
@@ -34,9 +34,15 @@ mod.vb.WebWrappedIcon = 8
 function mod:OnCombatStart(delay)
 	warnWebSpraySoon:Schedule(35 - delay)
 	timerWebSpray:Start(40 - delay)
-	timerWebWrap:Start(18 - delay)
-	warnSpidersSoon:Schedule(20.2 - delay)
-	timerSpider:Start(27 - delay)
+	if self:IsDifficulty("heroic10", "heroic25") then
+		timerWebWrap:Start(20 - delay)
+		warnSpidersSoon:Schedule(25 - delay)
+		timerSpider:Start(30 - delay)
+	else
+		timerWebWrap:Start(15 - delay)
+		warnSpidersSoon:Schedule(20.2 - delay)
+		timerSpider:Start(25.2 - delay)
+	end
 	self.vb.WebWrappedIcon = 8
 end
 
@@ -45,6 +51,13 @@ function mod:OnCombatEnd(wipe)
 		if DBT:GetBar(L.ArachnophobiaTimer) then
 			DBT:CancelBar(L.ArachnophobiaTimer)
 		end
+	end
+end
+
+local function PingMyLocation()
+	if DBM:UnitDebuff("player","Web Wrap") then
+		Minimap:PingLocation(0,0)
+		DBM:Schedule(4, PingMyLocation)
 	end
 end
 
@@ -58,15 +71,20 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnWebWrap:CombinedShow(0.5, args.destName)		
 		if self:AntiSpam(3, 1) then
 			specWarnWebWrap:Show()
-			--timerWebWrap:Start()
-			-- if self:IsDifficulty("normal25") then
-				-- timerWebWrap:Start()
-			-- else
-				-- timerWebWrap:Start(20)
-			-- end
+			if self:IsDifficulty("heroic10", "heroic25") then
+				timerWebWrap:Start(40)
+			elseif self:IsDifficulty("normal25") then
+				timerWebWrap:Start()
+			else
+				timerWebWrap:Start(25)
+			end
 		end
 		if args.destName == UnitName("player") then
-			yellWebWrap:Yell()
+			DBM:Schedule(2.5,function()
+				yellWebWrap:Yell()
+				PingMyLocation()
+				end
+				)
 		elseif not DBM:UnitDebuff("player", args.spellName) and self:AntiSpam(3, 2) then
 			specWarnWebWrap:Play("killwebs")
 		end
@@ -74,9 +92,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnWebSprayNow:Show()
 		warnWebSpraySoon:Schedule(35)
 		timerWebSpray:Start()
-		warnSpidersSoon:Schedule(25.2)
-		timerSpider:Start()
-		timerWebWrap:Start(20)
 	end
 end
 
@@ -89,7 +104,12 @@ end
 function mod:OnSync(event)
 	if event == "Spiderlings" then
 		warnSpidersNow:Show()
-		--warnSpidersSoon:Schedule(20.2)
-		--timerSpider:Start()
+		if self:IsDifficulty("heroic10", "heroic25") then
+			warnSpidersSoon:Schedule(35)
+			timerSpider:Start(40)
+		else
+			warnSpidersSoon:Schedule(25.2)
+			timerSpider:Start()
+		end
 	end
 end

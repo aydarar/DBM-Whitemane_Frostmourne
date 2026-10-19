@@ -2,7 +2,7 @@
 local mod	= DBM:NewMod("Thaddius", "DBM-Naxx", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20251103221602")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(15928)
 mod:SetEncounterID(1120)
 
@@ -70,8 +70,15 @@ do
 	function mod:SPELL_CAST_START(args)
 		if args.spellId == 28089 then -- Polarity Shift
 			self:SetStage(2)
-			timerNextShift:Start()
-			warnShiftSoon:Schedule(15)
+			if self.vb.noShift then
+				-- after "Maximum power!" (heals to full) there are no more shifts: no timer
+			elseif self:IsDifficulty("normal25") then
+				timerNextShift:Start()
+				warnShiftSoon:Schedule(15)
+			else
+				timerNextShift:Start(30)
+				warnShiftSoon:Schedule(25)
+			end
 			timerShiftCast:Start()
 			warnShiftCasting:Show()
 			lastShift = GetTime()

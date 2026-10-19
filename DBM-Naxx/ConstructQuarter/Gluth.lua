@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Gluth", "DBM-Naxx", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(15932)
 mod:SetEncounterID(1108)
 
@@ -21,15 +21,20 @@ local specWarnEnrage	= mod:NewSpecialWarningDispel(54427, "RemoveEnrage", nil, n
 
 local timerEnrage		= mod:NewBuffActiveTimer(8, 54427, nil, nil, nil, 5, nil, DBM_COMMON_L.ENRAGE_ICON)
 local timerEnrageCD		= mod:NewCDTimer(30, 54427, nil, nil, nil, 5)
-local timerDecimate		= mod:NewCDTimer(105, 28374, nil, nil, nil, 2)
+local timerDecimate		= mod:NewCDTimer(90, 28374, nil, nil, nil, 2)
 local enrageTimer		= mod:NewBerserkTimer(480)
 local timerHealingDebuff= mod:NewNextTimer(8, 25646, nil, nil, nil, 1)
 
 function mod:OnCombatStart(delay)
 	enrageTimer:Start(480 - delay)
 	timerEnrageCD:Start(30 - delay)
-	timerDecimate:Start(- delay)
-	warnDecimateSoon:Schedule(100 - delay)
+	if self:IsDifficulty("normal25") then
+		timerDecimate:Start(90 - delay)
+		warnDecimateSoon:Schedule(80 - delay)
+	else
+		timerDecimate:Start(105 - delay)
+		warnDecimateSoon:Schedule(95 - delay)
+	end
 	timerHealingDebuff:Start(10- delay)
 end
 
@@ -60,8 +65,13 @@ end
 function mod:SPELL_CAST_SUCCESS(args)
 	if args.spellId == 28375 and self:AntiSpam(20) then
 		warnDecimateNow:Show()
-		timerDecimate:Start()
-		warnDecimateSoon:Schedule(100)
+		if self:IsDifficulty("normal25") then
+			timerDecimate:Start()
+			warnDecimateSoon:Schedule(80)
+		else
+			timerDecimate:Start(105)
+			warnDecimateSoon:Schedule(95)
+		end
 	elseif args:IsSpellID(25646) then
 		timerHealingDebuff:Start()		
 	end

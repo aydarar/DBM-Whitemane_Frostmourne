@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Emalon", "DBM-VoA")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260114170225")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(33993)
 mod:SetEncounterID(774)
 mod:SetUsedIcons(8)

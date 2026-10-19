@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Souls", "DBM-BlackTemple")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(23418) -- 23418: Essence of Suffering ; 23419: Essence of Desire ; 23420: Essence of Anger
 mod:SetEncounterID(606)
 

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Oz", "DBM-Karazhan")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(18168)
 mod:SetEncounterID(655) -- Opera Hall
 --

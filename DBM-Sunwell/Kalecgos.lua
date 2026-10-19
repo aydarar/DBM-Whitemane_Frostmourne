@@ -4,7 +4,7 @@ local L          = mod:GetLocalizedStrings()
 local AceTimer   = LibStub("AceTimer-3.0")
 local BossHealth = DBM.BossHealth
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(24850)
 mod:SetEncounterID(724)
 

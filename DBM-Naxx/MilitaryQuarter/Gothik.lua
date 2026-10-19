@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Gothik", "DBM-Naxx", 4)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(16060)
 mod:SetEncounterID(1109)
 mod:SetUsedIcons(1, 2, 3, 4)
@@ -82,9 +82,13 @@ local wavesHeroic = {
 }
 
 local waves = wavesNormal
+local NextWave -- defined below
 
 local function StartPhase2(self)
 	self:SetStage(2)
+	self:Unschedule(NextWave) -- no more waves once Gothik is down
+	timerWave:Stop()
+	warnWaveSoon:Cancel()	
 	if self:IsDifficulty("normal25") then
 		timerTeleport:Start()
 	else

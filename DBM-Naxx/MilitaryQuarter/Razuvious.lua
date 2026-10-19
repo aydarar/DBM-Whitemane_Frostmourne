@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Razuvious", "DBM-Naxx", 4)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20251206163020")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(16061)
 mod:SetEncounterID(1113)
 
@@ -31,13 +31,23 @@ DBM:GetModLocalization("Razuvious"):SetOptionLocalization({Distance2Boss = "Show
 
 
 function mod:OnCombatStart(delay)
-	timerKnifeCD:Start(35.5 - delay)	
-	if self.Options.RangeFrame then
-		DBM.RangeCheck:Show(12)
+	if self:IsDifficulty("heroic10") then -- log 2026-10-08
+		timerKnifeCD:Start(15.5 - delay)
+	else
+		timerKnifeCD:Start(35.5 - delay)
 	end
-	if self.Options.Distance2Boss and DBM.Distance2Boss then
-		DBM.Distance2Boss:Show(20)
-	end	
+	if self:IsDifficulty( "heroic25", "heroic10") then
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Show(12)
+		end
+		if self.Options.Distance2Boss and DBM.Distance2Boss then
+			if self:IsDifficulty("heroic25") then
+				DBM.Distance2Boss:Show(20)
+			elseif self:IsDifficulty("heroic10") then
+				DBM.Distance2Boss:Show(15)
+			end
+		end	
+	end
 	if self:IsDifficulty("normal25", "heroic25", "heroic10") then
 		timerShout:Start(15 - delay)
 		warnShoutSoon:Schedule(10 - delay)
@@ -46,6 +56,15 @@ function mod:OnCombatStart(delay)
 		warnShoutSoon:Schedule(20 - delay)
 	end
 		timerUnbalanced:Start(30 - delay)
+end
+
+function mod:OnCombatEnd()
+	if self.Options.RangeFrame then
+		DBM.RangeCheck:Hide()
+	end
+	if self.Options.Distance2Boss then
+		DBM.Distance2Boss:Hide()
+	end	
 end
 
 function mod:SPELL_CAST_SUCCESS(args)

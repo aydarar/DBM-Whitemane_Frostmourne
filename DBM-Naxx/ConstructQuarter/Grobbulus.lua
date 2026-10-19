@@ -5,8 +5,9 @@ local ml = DBM:GetModLocalization("Grobbulus")
 ml:SetOptionLocalization({SpecWarnManySlimes="Show special warning when 3 or more Fallout Slimes are alive"})
 ml:SetWarningLocalization({SpecWarnManySlimes="|TInterface\\Icons\\spell_nature_abolishmagic:12:12|t %d Slimes! %s |TInterface\\Icons\\spell_nature_abolishmagic:12:12|t"})
 
-mod:SetRevision("20221016191326")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(15931)
+mod:SetEncounterID(1111)
 mod:SetUsedIcons(1, 2, 3, 4)
 
 mod:RegisterCombat("combat")

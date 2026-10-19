@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 local select = select
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(36678)
 mod:SetEncounterID(851)
 mod:SetUsedIcons(1, 2, 3, 4)

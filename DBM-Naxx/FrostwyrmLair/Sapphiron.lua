@@ -5,7 +5,7 @@ ml:SetOptionLocalization({SpecWarnRaidCD="Show warning and timer when $spell:642
 ml:SetWarningLocalization({SpecWarnRaidCD="|TInterface\\Icons\\spell_holy_powerwordbarrier:12:12|t Dsac/AM soon |TInterface\\Icons\\Spell_Holy_AuraMastery:12:12|t"})
 ml:SetTimerLocalization({TimerWarnRaidCD="Dsac/AM"})
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(15989)
 mod:SetEncounterID(1119)
 mod:SetMinSyncRevision(20220904000000)
@@ -24,7 +24,7 @@ mod:RegisterEventsInCombat(
 -- General
 local specWarnLowHP		= mod:NewSpecialWarning("SpecWarnSapphLow")
 
-local berserkTimer		= mod:NewBerserkTimer(900)
+local berserkTimer		= mod:NewBerserkTimer(600)
 
 -- Stage One (Ground Phase)
 mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(1))

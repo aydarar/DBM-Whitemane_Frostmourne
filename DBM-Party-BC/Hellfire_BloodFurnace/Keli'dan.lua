@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(557, "DBM-Party-BC", 2, 256)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(17377)--17377 is boss, 17653 are channelers that just pull with him.
 mod:SetEncounterID(1923)
 

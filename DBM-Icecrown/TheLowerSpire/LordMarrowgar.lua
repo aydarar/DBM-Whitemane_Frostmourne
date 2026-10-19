@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("LordMarrowgar", "DBM-Icecrown", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(36612)
 mod:SetEncounterID(845)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)

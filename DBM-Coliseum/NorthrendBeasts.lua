@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 local GetPlayerMapPosition, SetMapToCurrentZone = GetPlayerMapPosition, SetMapToCurrentZone
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetMinSyncRevision(7007)
 mod:SetCreatureID(34796, 35144, 34799, 34797)
 mod:SetEncounterID(629)

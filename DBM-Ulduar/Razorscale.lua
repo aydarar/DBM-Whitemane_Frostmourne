@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Razorscale", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260118220450")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(33186)
 mod:SetEncounterID(746)
 

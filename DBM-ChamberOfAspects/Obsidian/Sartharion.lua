@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 mod.statTypes = "normal,normal25"
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(28860)
 mod:SetEncounterID(742)
 mod:SetUsedIcons(8)
@@ -47,7 +47,7 @@ local timerVesperon				= mod:NewTimer(138, "TimerVesperon", 61251, nil, nil, 1)
 local timerTenebronWhelps		= mod:NewTimer(80, "TimerTenebronWhelps", 1022)
 local timerShadronPortal		= mod:NewTimer(132, "TimerShadronPortal", 11420)
 local timerVesperonPortal		= mod:NewTimer(168, "TimerVesperonPortal", 57988)
---local timerTwighlightBlackout	= mod:NewNextTimer(15, 9250867, nil, nil, nil, 2)
+
 local yellTwighlightBlackout	= mod:NewYellMe(9250867,"Stack at me!")
 local timerBlackoutCD			= mod:NewNextTimer(50, 9250868, nil, nil, nil, 3)
 local timerBlackout				= mod:NewTargetTimer(15, 9250868, nil, nil, nil, 5)

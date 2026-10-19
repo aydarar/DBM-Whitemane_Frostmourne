@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 local GetCurrentMapAreaID = GetCurrentMapAreaID
 
-mod:SetRevision("20251106152449")
+mod:SetRevision("20261018212731")
 mod:SetZone(DBM_DISABLE_ZONE_DETECTION)
 
 mod:RegisterEvents(

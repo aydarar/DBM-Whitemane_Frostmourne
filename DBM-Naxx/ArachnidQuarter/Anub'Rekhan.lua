@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Anub'Rekhan", "DBM-Naxx", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20251208191020")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(15956)
 mod:SetEncounterID(1107)
 
@@ -10,7 +10,7 @@ mod:RegisterCombat("combat_yell", L.Pull1, L.Pull2)
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 28783 56090 28785 54021 9250582 9250583 9250578 9250579",
 	"SPELL_CAST_SUCCESS 56090 9250578 9250579",
-	"SPELL_AURA_REMOVED 28785 54021 9250582 9250583",
+	"SPELL_AURA_REMOVED 28785 54021 9250580 9250581 9250582 9250583",
 	"SPELL_AURA_APPLIED 9250684 9250685"
 )
 
@@ -26,8 +26,8 @@ local timerLocustIn			= mod:NewCDTimer(60, 28785, nil, nil, nil, 6)
 local timerLocustFade		= mod:NewBuffActiveTimer(23, 28785, nil, nil, nil, 6)
 local timerImpale			= mod:NewCDTimer(20, 56090, nil, nil, nil, 3)
 
-mod:AddBoolOption("Distance2Boss", true, "misc") -- distance 2 boss status, 15 yd
-DBM:GetModLocalization("Anub'Rekhan"):SetOptionLocalization({Distance2Boss = "Show distance 2 boss (15 yd) - needs DBM-Distance2Boss"})
+mod:AddBoolOption("Distance2Boss", true, "misc") -- distance 2 boss status, 15/20 yd 
+DBM:GetModLocalization("Anub'Rekhan"):SetOptionLocalization({Distance2Boss = "Show distance 2 boss (15/20 yd) - needs DBM-Distance2Boss"})
 
 mod:AddBoolOption("ArachnophobiaTimer", true, "timer", nil, nil, nil, "at1859")--Sad caveat that 10 and 25 man have own achievements and we have to show only 1 in GUI
 
@@ -36,7 +36,11 @@ function mod:OnCombatStart(delay)
 	warningLocustSoon:Schedule(50 - delay)
 	timerImpale:Start(11-delay)
 	if self.Options.Distance2Boss and DBM.Distance2Boss then
-		DBM.Distance2Boss:Show(15)
+		if self:IsDifficulty("heroic10") then
+			DBM.Distance2Boss:Show(15)
+		else
+			DBM.Distance2Boss:Show(20)
+		end
 	end	
 end
 
@@ -44,23 +48,25 @@ function mod:OnCombatEnd(wipe)
 	if not wipe and self.Options.ArachnophobiaTimer then
 		DBT:CreateBar(1200, L.ArachnophobiaTimer, "Interface\\Icons\\INV_Misc_MonsterSpiderCarapace_01")
 	end
-	if self.Options.Distance2Boss and DBM.Distance2Boss then
+	if self.Options.Distance2Boss then
 		DBM.Distance2Boss:Hide()
 	end	
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(28783, 56090,9250578,9250579) then  -- Impale
+	if args:IsSpellID(28783, 56090, 9250578, 9250579) then  -- Impale
 		timerImpale:Start()
-		warnImpale:Show(args.destName)
-		if args:IsPlayer() then
-			yellImpale:Yell()
+		if args.destName then
+			warnImpale:Show(args.destName)
+			if args:IsPlayer() then
+				yellImpale:Yell()
+			end
 		end
-	elseif args:IsSpellID(28785, 54021,9250583,9250582) then  -- Locust Swarm
+	elseif args:IsSpellID(28785, 54021, 9250583, 9250582) then  -- Locust Swarm
 		specialWarningLocust:Show()
 		specialWarningLocust:Play("aesoon")
 		timerLocustIn:Stop()
-		if self:IsDifficulty("normal25", "heroic25") then
+		if self:IsDifficulty("normal25") then
 			timerLocustFade:Start(23)
 		else
 			timerLocustFade:Start(19)
@@ -71,16 +77,16 @@ end
 mod.SPELL_CAST_SUCCESS = mod.SPELL_CAST_START
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args:IsSpellID(28785, 54021,9250583,9250582)
-	and args.auraType == "BUFF" then
+	if args:IsSpellID(28785, 54021, 9250580, 9250581, 9250582, 9250583)
+	and args.auraType == "BUFF"  and self:AntiSpam(10, "LocustFade") then
 		warningLocustFaded:Show()
-		timerLocustIn:Start(67)
+		timerLocustIn:Start()
 		warningLocustSoon:Schedule(57)
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsSpellID(9250684,9250685) then -- Carrion Wake
+	if args:IsSpellID(9250684, 9250685) and args:IsPlayer() and self:AntiSpam(3, "CarrionWake") then -- Carrion Wake
 		specWarnGTFO:Show(args.spellName)
 		specWarnGTFO:Play("watchfeet")
 	end

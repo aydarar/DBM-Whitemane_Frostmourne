@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Noth", "DBM-Naxx", 3)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20251206144129")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(15954)
 mod:SetEncounterID(1117)
 
@@ -32,9 +32,22 @@ local timerTeleportBack	= mod:NewTimer(70, "TimerTeleportBack", 46573, nil, nil,
 local timerCurseCD		= mod:NewCDTimer(25, 29213, nil, nil, nil, 5, nil, DBM_COMMON_L.CURSE_ICON) -- Whitemane PTR - buff notes say 15s, vod says consistent 25s
 local timerAddsCD		= mod:NewAddsTimer(25, 29212, nil, "-Healer")
 local timerBlink		= mod:NewNextTimer(30, 29208)
+local timerPoolIn 		= mod:NewBuffActiveTimer(5, "Pool drops in",nil, nil, nil, 5, nil, DBM_COMMON_L.DEADLY_ICON)
 
 local specWarnCurse = mod:NewAnnounce("Run out and drop pool outside close to previous pools!", 2)
 mod:AddRangeFrameOption(8, 29213)
+local warned = false
+
+local function RunOutWarn(self)
+	if not warned then
+		specWarnCurse:Show()
+		timerPoolIn:Start()
+		specWarnCurse:Play("runout")
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Show(8)
+		end
+	end
+end
 
 function mod:OnCombatStart(delay)
 	timerAddsCD:Start(-delay)
@@ -63,11 +76,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnBlink:Show()
 		timerBlink:Start()
 		warnBlinkSoon:Schedule(27)
-	elseif args:IsSpellID(9250590, 9250591) and args:IsPlayer() then
-		specWarnCurse:Show()
-		specWarnCurse:Play("runout")
-		if self.Options.RangeFrame then
-			DBM.RangeCheck:Show(8)
+	end
+	if args:IsPlayer() then
+		if args.spellId == 9250688 then
+			warned = true
+			RunOutWarn(self)
+		elseif args:IsSpellID(9250590, 9250591) then
+			warned = false
+			self:Schedule(15, RunOutWarn, self)
 		end
 	end
 end

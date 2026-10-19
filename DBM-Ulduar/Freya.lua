@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Freya", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260118154923")
+mod:SetRevision("20261018212731")
 
 mod:SetCreatureID(32906)
 mod:SetEncounterID(753)

@@ -1,8 +1,9 @@
 local mod	= DBM:NewMod("Malygos", "DBM-EyeOfEternity")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20220927225043")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(28859)
+mod:SetEncounterID(734)
 
 --mod:RegisterCombat("yell", L.YellPull)
 mod:RegisterCombat("combat")
@@ -15,7 +16,7 @@ mod:RegisterEvents(
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 60936 57407 9250864 9250865",
 	"SPELL_CAST_START 56505 9250851 9250852",
-	"SPELL_CAST_SUCCESS 57430",
+	"SPELL_CAST_SUCCESS 57430 9250853 9250854",
 	"CHAT_MSG_RAID_BOSS_EMOTE"
 )
 -- General
@@ -40,6 +41,8 @@ local yellFeedback				= mod:NewYellMe(9250865)
 local timerFeedbackCD			= mod:NewNextTimer(52, 9250865, nil, nil, nil, 3)
 local timerFeedback				= mod:NewTargetTimer(12, 9250865, nil, nil, nil, 5)
 local timerArcaneBreathCD		= mod:NewCDTimer(13.5, 9250852, nil, "Tank|Healer", nil, 5) -- Frostmourne custom: 20.6, then 13.6-15 (paused by Vortex)
+-- Arcane Storm (Frostmourne custom, phase 1; 9250853 10-man, 9250854 25-man), logs 10 and 25: first 9.4-14.3, then every 10.1-15 (paused by Vortex)
+local timerArcaneStormCD		= mod:NewCDTimer(10, 9250854, nil, nil, nil, 2)
 
 -- Stage Two
 mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(2))
@@ -103,6 +106,7 @@ function mod:OnCombatStart(delay)
 	timerSummonPowerSpark:Start(19-delay)
 	timerFeedbackCD:Start(27-delay)
 	timerArcaneBreathCD:Start(20.5-delay)
+	timerArcaneStormCD:Start(9-delay)
 	table.wipe(guids)
 	mod.vb.SparkIcon = 8
 end
@@ -153,6 +157,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 		end
 		
 		timerStaticFieldCD:Start()
+	elseif args:IsSpellID(9250853, 9250854) then -- Arcane Storm (Frostmourne custom)
+		if self.vb.phase == 1 then timerArcaneStormCD:Start() end
+		return
 	end
 end
 
@@ -223,11 +230,15 @@ function mod:OnSync(event, arg)
 		timerSummonPowerSpark:Cancel()
 		timerFeedbackCD:Cancel()
 		timerArcaneBreathCD:Cancel()
+		timerArcaneStormCD:Cancel()
 		timerVortexCD:Cancel()
 		warnVortexSoon:Cancel()
 		warnPhase2:Show()
 		timerIntermission:Start()
 		timerBreathCD:Start(78)
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Hide()
+		end
 	elseif event == "BreathSoon" then
 		warnBreathInc:Show()
 	elseif event == "Phase3" then
@@ -242,5 +253,11 @@ function mod:OnSync(event, arg)
 			specWarnP3SurgeOfPowerSoon:Show()
 			specWarnP3SurgeOfPowerSoon:Play("findshield")
 		end
+	end
+end
+
+function mod:OnCombatEnd()
+	if self.Options.RangeFrame then
+		DBM.RangeCheck:Hide()
 	end
 end

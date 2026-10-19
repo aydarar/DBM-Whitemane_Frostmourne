@@ -1,0 +1,7 @@
+## Interface: 30300
+## Title: |cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Distance2Boss|r
+## Notes: Distance to boss status /d2b x y Drag it by with left click on top of status
+## Version: 1.0
+## Dependencies: DBM-Core
+## SavedVariables: DBMDistance2BossDB
+DBM-Distance2Boss.lua

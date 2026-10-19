@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("PT", "DBM-Party-BC", 12)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20220518110528")
+mod:SetRevision("20261018212731")
 
 mod:RegisterEvents(
 	"UPDATE_WORLD_STATES",

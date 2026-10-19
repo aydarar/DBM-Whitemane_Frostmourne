@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Loatheb", "DBM-Naxx", 3)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20251206163232")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(16011)
 mod:SetEncounterID(1115)
 
@@ -10,9 +10,8 @@ mod:RegisterCombat("combat")--Maybe change to a yell later so pull detection wor
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS 29204 55052 55593 9250600 9250601",
 	"SPELL_AURA_APPLIED 9250692 9250693",
-	"SPELL_DAMAGE",
+	"SPELL_AURA_REMOVED 9250692",	
 	"SPELL_SUMMON 29234",
-	"SWING_DAMAGE",
 	"UNIT_DIED"
 )
 
@@ -25,11 +24,18 @@ local warnHealSoon	= mod:NewAnnounce("WarningHealSoon", 4, 48071, nil, nil, nil,
 local warnHealNow	= mod:NewAnnounce("WarningHealNow", 1, 48071, false, nil, nil, 55593)
 
 local timerSpore	= mod:NewNextTimer(15, 32329, nil, nil, nil, 5, 42524, DBM_COMMON_L.DAMAGE_ICON)
-local timerDoom		= mod:NewNextTimer(30, 29204, nil, nil, nil, 2)
+local timerDoom		= mod:NewNextTimer(20, 29204, nil, nil, nil, 2)
 local timerAura		= mod:NewBuffActiveTimer(17, 55593, nil, nil, nil, 5, nil, DBM_COMMON_L.HEALER_ICON)
 
 local specWarnDebuff = mod:NewAnnounce("Find Purifying Spore!", 2)
-local specWarnSafe   = mod:NewAnnounce("Wait near Purifying Spore until debuff expires!", 2)
+local specWaitDebuff = mod:NewAnnounce("Wait near Purifying Spore until debuff expires!", 2)
+local specWarnSafe   = mod:NewAnnounce("Safe to go back", 2)
+local yellVolatile	 = mod:NewYell(9250692, UnitName("player").."!")
+local warnVolatile	 = mod:NewTargetNoFilterAnnounce(9250692, 3)
+
+mod:SetUsedIcons(8, 7)
+mod:AddSetIconOption("SetIconOnVolatile", 9250692, true, false, {8, 7})
+local volatileIcon = 8
 
 mod:AddBoolOption("SporeDamageAlert", false)
 
@@ -42,9 +48,9 @@ function mod:OnCombatStart(delay)
 	pullTime = GetTime() - delay
 	self.vb.doomCounter = 0
 	self.vb.sporeCounter = 0
-	if self:IsDifficulty("normal25", "heroic25","heroic10") then
+	if self:IsDifficulty("normal25", "heroic25") then
 		self.vb.sporeTimer = 15
-		timerDoom:Start(120 - delay, 1)
+		if self:IsDifficulty("normal25") then timerDoom:Start(20 - delay, 1) end
 	else
 		self.vb.sporeTimer = 36
 		timerDoom:Start(120 - delay, 1)
@@ -63,14 +69,27 @@ function mod:SPELL_SUMMON(args)
 end
 
 function mod:SPELL_AURA_APPLIED(args)
-	if args:IsPlayer() then
-		if args:IsSpellID(9250692) then -- Volatile Spores
+	if args.spellId == 9250692 then -- Volatile Spores
+		if self.Options.SetIconOnVolatile then -- skull, then cross if a second one is out at the same time
+			self:SetIcon(args.destName, volatileIcon, 10)
+			volatileIcon = volatileIcon == 8 and 7 or 8
+		end		
+		if args:IsPlayer() then
 			specWarnDebuff:Show()
 			specWarnDebuff:Play("findshelter")
-		elseif args:IsSpellID(9250693) then
-			specWarnSafe:Show()
-			specWarnSafe:Play("safenow") 
+			yellVolatile:Yell()
+		else
+			warnVolatile:Show(args.destName)
 		end
+	elseif args.spellId == 9250693 and args:IsPlayer() then
+		specWaitDebuff:Show()
+		specWaitDebuff:Play("waithere") 
+	end
+end
+
+function mod:SPELL_AURA_REMOVED(args)
+	if args:IsPlayer() and args.spellId == 9250692 then
+		specWarnSafe:Play("safenow")
 	end
 end
 
@@ -95,17 +114,17 @@ end
 
 --Spore loser function. Credits to Forte guild and their old discontinued dbm plugins. Sad to see that guild disband, best of luck to them!
 function mod:SPELL_DAMAGE(_, sourceName, _, _, destName, _, spellId, _, _, amount)
-	if self.Options.SporeDamageAlert and destName == "Spore" and spellId ~= 62124 and self:IsInCombat() then
-		SendChatMessage(sourceName..", You are damaging a Spore!!! ("..amount.." damage)", "RAID_WARNING")
-		SendChatMessage(sourceName..", You are damaging a Spore!!! ("..amount.." damage)", "WHISPER", nil, sourceName)
-	end
+	-- if self.Options.SporeDamageAlert and destName == "Spore" and spellId ~= 62124 and self:IsInCombat() then
+		-- SendChatMessage(sourceName..", You are damaging a Spore!!! ("..amount.." damage)", "RAID_WARNING")
+		-- SendChatMessage(sourceName..", You are damaging a Spore!!! ("..amount.." damage)", "WHISPER", nil, sourceName)
+	-- end
 end
 
 function mod:SWING_DAMAGE(_, sourceName, _, _, destName, _, _, _, _, amount)
-	if self.Options.SporeDamageAlert and destName == "Spore" and self:IsInCombat() then
-		SendChatMessage(sourceName..", You are damaging a Spore!!! ("..amount.." damage)", "RAID_WARNING")
-		SendChatMessage(sourceName..", You are damaging a Spore!!! ("..amount.." damage)", "WHISPER", nil, sourceName)
-	end
+	-- if self.Options.SporeDamageAlert and destName == "Spore" and self:IsInCombat() then
+		-- SendChatMessage(sourceName..", You are damaging a Spore!!! ("..amount.." damage)", "RAID_WARNING")
+		-- SendChatMessage(sourceName..", You are damaging a Spore!!! ("..amount.." damage)", "WHISPER", nil, sourceName)
+	-- end
 end
 
 --because in all likelyhood, pull detection failed (cause 90s like to charge in there trash and all and pull it

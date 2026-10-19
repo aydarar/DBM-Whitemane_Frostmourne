@@ -19,7 +19,7 @@ L.SILENT_REMINDER						= "Reminder: " .. L.DBM .. " is still in silent mode."
 
 L.COPY_URL_DIALOG_NEWS					= "To read latest news, visit link below"
 
-L.UPDATEREMINDER_URL					= "https://github.com/npgtb/DBM-Frostmourne/"
+L.UPDATEREMINDER_URL					= "https://github.com/aydarar/DBM-Whitemane_Frostmourne"
 
 L.LOAD_MOD_ERROR						= "Error while loading boss mods for %s: %s"
 L.LOAD_MOD_SUCCESS						= "Loaded '%s' mods. For more options such as custom alert sounds and personalized warning notes, type /dbm."

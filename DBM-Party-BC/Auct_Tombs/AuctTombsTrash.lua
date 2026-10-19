@@ -1,6 +1,6 @@
 local mod	= DBM:NewMod("AuctTombsTrash", "DBM-Party-BC", 8, 250)
 
-mod:SetRevision("20220518110528")
+mod:SetRevision("20261018212731")
 
 mod.isTrashMod = true
 

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Lanathel", "DBM-Icecrown", 3)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(37955)
 mod:SetEncounterID(853)
 mod:SetModelID("creature/bloodqueen/bloodqueen.m2")

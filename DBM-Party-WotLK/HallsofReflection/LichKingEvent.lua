@@ -1,7 +1,7 @@
 local mod = DBM:NewMod("LichKingEvent", "DBM-Party-WotLK", 16)
 local L = mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetEncounterID(843)
 mod:RegisterEvents(
 	"SPELL_AURA_REMOVED",

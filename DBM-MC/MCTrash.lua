@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("MCTrash", "DBM-MC", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20220518110528")
+mod:SetRevision("20261018212731")
 --mod:SetModelID(47785)
 
 

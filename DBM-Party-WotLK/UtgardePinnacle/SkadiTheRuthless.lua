@@ -3,10 +3,10 @@ local L		= mod:GetLocalizedStrings()
 
 mod.statTypes = "normal,heroic,mythic"
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20261018212731")
 mod:SetCreatureID(26693)
-mod:SetEncounterID(581)
 mod:SetMinSyncRevision(3108)
+mod:SetEncounterID(581)
 
 mod:RegisterCombat("yell", L.Phase2)
 
@@ -30,6 +30,14 @@ local timerPoisonCD			= mod:NewCDTimer(10, 59331, nil, "Healer", nil, 5)
 local timerWhirlwindCD		= mod:NewCDTimer(20, 59322, nil, nil, nil, 2)
 local timerAchieve			= mod:NewAchievementTimer(180, 1873)
 
+-- Frostmourne logs 2026-10-08/09 (3 pulls): first Poisoned Spear 14, first Whirlwind 19, then every 25.2-28.3
+function mod:OnCombatStart(delay)
+	if self:IsDifficulty("heroic5") then
+		timerPoisonCD:Start(14 - delay)
+		timerWhirlwindCD:Start(19 - delay)
+	end
+end
+
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(50255, 59331) then
 		timerPoisonCD:Start() -- Poisoned Spear throw
@@ -41,7 +49,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warningPoisonDebuff:Show(args.destName)
 		timerPoisonDebuff:Start(args.destName)
 	elseif args:IsSpellID(50228, 59322) then
-		timerWhirlwindCD:Start()
+		timerWhirlwindCD:Start(self:IsDifficulty("heroic5") and 25 or nil)
 		specWarnWhirlwind:Show()
 		specWarnWhirlwind:Play("runout")
 	end
