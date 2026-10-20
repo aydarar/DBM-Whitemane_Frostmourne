@@ -309,6 +309,28 @@ local function StartPhase3(self)
 	end
 end
 
+local function StartPhase2(self)
+	if self.vb.phase == 1 then
+		self:SetStage(2)
+		warnPhase2:Show()
+		warnPhase2:Play("ptwo")
+		timerFissureCD:Start(25)
+		timerManaBomb:Start(20)
+		timerFrostBlast:Start(45)
+		if self:IsDifficulty("normal25") then
+			timerMCCD:Start(50)
+			warnMindControlSoon:Schedule(45)
+			if self.Options.EqUneqWeaponsKT and self:IsDps() then
+				self:Schedule(48, UnWKT, self)
+				self:Schedule(48.5, UnWKT, self)
+			end
+		end
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Show(12)
+		end
+	end
+end
+
 function mod:OnCombatStart(delay)
 	if self:IsDifficulty("normal25", "normal10") then 
 		self:SetStage(1)
