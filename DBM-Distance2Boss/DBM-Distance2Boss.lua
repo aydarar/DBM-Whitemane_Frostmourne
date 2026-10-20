@@ -74,7 +74,7 @@ local function CheckRange(d,u1)
 		local r,prev_r ="","0"
 		for k,v in pairs (RangeCheckItems) do
 			if IsItemInRange(v.s,u) == 1 then
-				r = "["..prev_r.."-"..v.r.."]"
+				r = prev_r.."-"..v.r
 				break
 			end
 			prev_r=v.r
@@ -105,10 +105,10 @@ local function update()
 		local msg = ""
 		if x and x == 0 then
 			frame.inRangeText:SetTextColor(0, 1, 0)
-			msg="Safe now "..y      
+			msg = y      
 		else
 			frame.inRangeText:SetTextColor(1, 0, 0)
-			msg="Run out! "..y
+			msg = y
 		end
 		frame.inRangeText:SetText(msg)
 		frame.inRangeText:Show()
