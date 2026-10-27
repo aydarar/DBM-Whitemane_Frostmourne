@@ -161,14 +161,18 @@ SLASH_DISTANCETOBOSS2 = "/distance2boss"
 SlashCmdList["DISTANCETOBOSS"] = function(msg)
 	msg = (msg or ""):lower()
 	local args = {}
+	local i = 1
 	if msg ~= "" then
-		for i, v in ipairs(string.match(msg, "(%w+)") ) do
+		for v in string.gmatch(msg, "(%w+)") do
 			args[i]=v
+			i = i+1
 		end
 	end
 	if d2b:IsShown() then
 		d2b:Hide(true)
 	else
-		d2b:Show(r, true,args[2])
+		if type(args[1]) == "number" then
+			d2b:Show(args[1], true,args[2])
+		end
 	end
 end
