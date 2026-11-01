@@ -39,7 +39,7 @@ local specWarnFissureClose		= mod:NewSpecialWarningClose(59127, nil, nil, nil, 2
 local yellFissure				= mod:NewYellMe(59127)
 
 local timerFissure				= mod:NewTargetTimer(5, 59128, nil, nil, 2, 3)--Cast timer until Void Blast. it's what happens when shadow fissure explodes.
-local timerBreath				= mod:NewCDTimer(20, 58956, nil, "Tank|Healer", nil, 5)
+local timerBreath				= mod:NewCDCountTimer(20, 58956, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.DEADLY_ICON)
 local timerWall					= mod:NewNextTimer(25, 43113, nil, nil, nil, 2)
 local timerTenebron				= mod:NewTimer(45, "TimerTenebron", 61248, nil, nil, 1)
 local timerShadron				= mod:NewTimer(88, "TimerShadron", 58105, nil, nil, 1)
@@ -65,6 +65,7 @@ local vesperonPortalEmote = "You pose no threat, lesser beings! Give me your wor
 local lastvoids = {}
 local lastfire = {}
 local tsort, tinsert, twipe = table.sort, table.insert, table.wipe
+mod.vb.breathCount = 0
 
 local function isunitdebuffed(spellName)
 	for uId in DBM:GetGroupMembers() do
@@ -120,10 +121,11 @@ end
 
 function mod:OnCombatStart(delay)
 	--Cache spellnames so a solo player check doesn't fail in CheckDrakes in 8.0+
+	self.vb.breathCount = 0
 	self:Schedule(5, CheckDrakes, self, delay)
 	timerWall:Start(20-delay)
 	warnBreathSoon:Schedule(10-delay)
-	timerBreath:Start(15-delay)
+	timerBreath:Start(15-delay, self.vb.breathCount+1)
 	timerBlackoutCD:Start(22-delay)
 	
 	twipe(lastvoids)
@@ -159,8 +161,9 @@ end
 
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(56908, 58956, 9250871, 9250872) then -- Flame breath
+		self.vb.breathCount = self.vb.breathCount + 1
 		warnBreathSoon:Schedule(15)
-		timerBreath:Start()
+		timerBreath:Start(nil,self.vb.breathCount)
 	end
 end
 
