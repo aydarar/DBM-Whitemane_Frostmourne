@@ -8,7 +8,7 @@ mod:SetEncounterID(1113)
 mod:RegisterCombat("combat_yell", L.Yell1, L.Yell2, L.Yell3, L.Yell4)
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_SUCCESS 55543 29107 29060 29061 26613 9250696 9250608 9250609",
+	"SPELL_CAST_SUCCESS 55543 29107 29060 29061 26613 9250606 9250607 9250608 9250609",
 	"SPELL_AURA_APPLIED 605",
 	"UNIT_DIED"
 )
@@ -25,9 +25,9 @@ local timerMindControl	= mod:NewBuffActiveTimer(60, 605, nil, nil, nil, 6)
 local timerUnbalanced   = mod:NewNextTimer(30, 26613, nil, nil, nil, 1)
 local timerKnifeCD		= mod:NewNextTimer(10, 9250609, nil, nil, nil, 3) -- Frostmourne custom, log 2026-10-06: 35.5, then every 10.0-10.1
 
-mod:AddRangeFrameOption(12, 9250696) -- Disciplinary Shout (Frostmourne custom)
-mod:AddBoolOption("Distance2Boss", true, "misc") -- distance to boss status 20 yd
-DBM:GetModLocalization("Razuvious"):SetOptionLocalization({Distance2Boss = "Show distance to boss status (20 yd) - needs DBM-Distance2Boss"})
+mod:AddRangeFrameOption(12, 9250609) -- Jagged Knife range (Frostmourne custom)
+mod:AddBoolOption("Distance2Boss", true, "misc") -- distance to boss status 15/20 yd 
+DBM:GetModLocalization("Razuvious"):SetOptionLocalization({Distance2Boss = "Show distance to boss status (15/20 yd) - needs DBM-Distance2Boss"})
 
 
 function mod:OnCombatStart(delay)
@@ -69,9 +69,9 @@ end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
-	if args:IsSpellID(55543, 29107, 9250696) 	then  -- Disrupting Shout
+	if args:IsSpellID(55543, 29107, 9250606, 9250607) then  -- Disrupting Shout
 		warnShoutNow:Show()
-		if self:IsDifficulty("normal25", "heroic25", "heroic10") then
+		if self:IsDifficulty("normal25", "heroic25") then
 			timerShout:Start()
 			warnShoutSoon:Schedule(10)
 		else
